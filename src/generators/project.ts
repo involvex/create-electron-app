@@ -265,6 +265,7 @@ function getTsConfigContent(): object {
 function getViteConfigContent(_options: ProjectOptions): string {
 	// For simplicity, return a generic config that works for all templates
 	return `import { defineConfig, externalizeDepsPlugin } from "electron-vite";
+import { resolve } from "node:path";
 
 export default defineConfig({
   main: {
@@ -273,6 +274,9 @@ export default defineConfig({
       rollupOptions: {
         external: ["electron"],
         plugins: [externalizeDepsPlugin({ explicit: ["electron"] })],
+        input: {
+          main: resolve(__dirname, '../src/main/index.ts'),
+        },
       },
     },
   },
@@ -282,12 +286,20 @@ export default defineConfig({
       rollupOptions: {
         external: ["electron"],
         plugins: [externalizeDepsPlugin({ explicit: ["electron"] })],
+        input: {
+          preload: resolve(__dirname, '../src/preload/index.ts'),
+        },
       },
     },
   },
   renderer: {
     build: {
       outDir: "dist/renderer",
+      rollupOptions: {
+        input: {
+          renderer: resolve(__dirname, '../src/renderer/index.html'),
+        },
+      },
     },
   },
 });
@@ -339,7 +351,7 @@ export default {
 function getPostcssConfigContent(): string {
 	return `export default {
   plugins: {
-    tailwindcss: {},
+    '@tailwindcss/postcss': {},
     autoprefixer: {},
   },
 }

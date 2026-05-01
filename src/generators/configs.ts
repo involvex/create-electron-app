@@ -49,6 +49,7 @@ export function generatePackageJson(options: ProjectOptions): Record<string, unk
 			tailwindcss: '^4.0.0',
 			postcss: '^8.4.0',
 			autoprefixer: '^10.4.0',
+			'@tailwindcss/postcss': '^4.0.0',
 		});
 	} else if (options.template === 'vue') {
 		Object.assign(devDeps, {
@@ -71,7 +72,7 @@ export function generatePackageJson(options: ProjectOptions): Record<string, unk
 				break;
 			case 'kumo':
 				Object.assign(deps, {
-					'@cloudflare/kumo': '^0.2.0',
+					'@cloudflare/kumo': 'latest',
 				});
 				break;
 			case 'aura':
@@ -170,6 +171,7 @@ function getTsConfig(_options: ProjectOptions): object {
 function getElectronViteConfig(_options: ProjectOptions): string {
 	// For simplicity, return a single config that works for all templates
 	return `import { defineConfig, externalizeDepsPlugin } from "electron-vite";
+import { resolve } from "node:path";
 
 export default defineConfig({
   main: {
@@ -178,6 +180,9 @@ export default defineConfig({
       rollupOptions: {
         external: ["electron"],
         plugins: [externalizeDepsPlugin({ explicit: ["electron"] })],
+        input: {
+          main: resolve(__dirname, '../src/main/index.ts'),
+        },
       },
     },
   },
@@ -187,12 +192,20 @@ export default defineConfig({
       rollupOptions: {
         external: ["electron"],
         plugins: [externalizeDepsPlugin({ explicit: ["electron"] })],
+        input: {
+          preload: resolve(__dirname, '../src/preload/index.ts'),
+        },
       },
     },
   },
   renderer: {
     build: {
       outDir: "dist/renderer",
+      rollupOptions: {
+        input: {
+          renderer: resolve(__dirname, '../src/renderer/index.html'),
+        },
+      },
     },
   },
 });

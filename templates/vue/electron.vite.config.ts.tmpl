@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { defineConfig, externalizeDepsPlugin } from "electron-vite";
 import vue from "@vitejs/plugin-vue";
 
@@ -8,6 +9,9 @@ export default defineConfig({
       rollupOptions: {
         external: ["electron"],
         plugins: [externalizeDepsPlugin({ explicit: ["electron"] })],
+        input: {
+          main: resolve(__dirname, '../src/main/index.ts'),
+        },
       },
     },
   },
@@ -17,12 +21,20 @@ export default defineConfig({
       rollupOptions: {
         external: ["electron"],
         plugins: [externalizeDepsPlugin({ explicit: ["electron"] })],
+        input: {
+          preload: resolve(__dirname, '../src/preload/index.ts'),
+        },
       },
     },
   },
   renderer: {
     build: {
       outDir: "dist/renderer",
+      rollupOptions: {
+        input: {
+          renderer: resolve(__dirname, '../src/renderer/index.html'),
+        },
+      },
     },
     resolve: {
       alias: {
