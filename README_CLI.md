@@ -6,7 +6,7 @@ Interactive CLI for scaffolding Electron applications with Bun runtime, TypeScri
 
 - 🚀 **Bun Runtime**: 10-100x faster than npm, built-in bundler
 - ⚡ **Hot Reloading**: Instant HMR with electron-vite
-- 🎨 **Multiple Templates**: Vanilla, React, Vue, React+Tailwind
+- 🎨 **Multiple Templates**: Vanilla, React, Vue
 - 🎨 **Styling Options**: Tailwind CSS, Aura UI, Kumo, shadcn/ui, custom CSS
 - 🪄 **Glass Morphism**: Built-in frosted glass effects
 - 🎭 **Navigation**: Native Electron MenuBar or custom navbar
@@ -14,9 +14,28 @@ Interactive CLI for scaffolding Electron applications with Bun runtime, TypeScri
 - 🌗 **Themes**: Dark/light mode with multiple presets
 - ✨ **Code Quality**: ESLint, Prettier, TypeScript
 
-## Quick Start
+## Installation
 
-### Interactive Usage
+### Global Usage
+
+```bash
+bunx @involvex/create-electron-app
+```
+
+### Local Development
+
+```bash
+# Clone the repository
+cd create-electron-app
+
+# Install dependencies
+bun install
+
+# Run CLI
+bun run src/index.ts
+```
+
+## Usage
 
 ```bash
 bunx @involvex/create-electron-app
@@ -31,37 +50,27 @@ The CLI will guide you through:
 5. **Code Quality**: ESLint, Prettier, Git initialization
 6. **Backend**: Vite backend, Bun.serve, Express, or none
 
-### Local Development
-
-```bash
-# Install dependencies
-bun install
-
-# Run CLI locally
-bun run src/index.ts
-```
-
 ## Templates
 
-### 1. Vanilla + Vite (Minimal)
+### Vanilla + Vite
 
-Pure TypeScript + Vite with Bun - lightweight and fast.
+Minimal TypeScript setup with Bun - perfect for lightweight apps.
 
-### 2. React + Vite
+### React + Vite
 
 Modern React 19 with fast HMR and Bun dev server.
 
-### 3. React + Vite + Tailwind + Component Library
+### React + Vite + Tailwind + Component Library
 
 Full-featured with:
 
 - Tailwind CSS 4
 - Optional: Kumo (Cloudflare) or shadcn/ui components
 - Glass morphism utilities
-- Dark/light theme with CSS variables
-- Optional: Aura UI components
+- Dark/light theme toggle
+- 50+ pre-built components available
 
-### 4. Vue + Vite
+### Vue + Vite
 
 Vue 3 Composition API with TypeScript support.
 
@@ -70,10 +79,10 @@ Vue 3 Composition API with TypeScript support.
 ### Primary Frameworks
 
 - **Tailwind CSS 4**: Industry standard with `@theme` tokens
-- **Aura UI**: "Vibrant Depth" design with glass morphism
+- **Aura UI**: Vibrant Depth design with glass morphism
 - **Kumo**: Cloudflare's design system (87K weekly downloads)
 - **shadcn/ui**: 50+ customizable components
-- **@casoon/tailwindcss-glass**: Dedicated glass morphism system
+- **@casoon/tailwindcss-glass**: Dedicated glass morphism
 
 ### Lightweight Alternatives (<35KB)
 
@@ -83,7 +92,6 @@ Vue 3 Composition API with TypeScript support.
 - **Lissom.CSS**: Classless, minimalist
 - **Frankenstyle**: No-build utility-first
 - **Cutestrap**: 2.7KB progressive enhancement
-- **SamphireCSS**: 12KB gzipped, content-first
 
 ## UI Features
 
@@ -91,16 +99,16 @@ Vue 3 Composition API with TypeScript support.
 
 Three intensity levels:
 
-- **Soft Glass**: 8px blur, subtle transparency
-- **Standard Glass**: 16px blur, moderate
-- **Strong Glass**: 24px blur, dense
+- **Soft**: 8px blur, subtle transparency
+- **Standard**: 16px blur, moderate
+- **Strong**: 24px blur, dense
 
 Plus dark glass and gradient variants.
 
 ### Navigation
 
-- **Native Electron MenuBar**: Built-in menu system
-- **Sticky Navbar**: `position: sticky` with blur effect
+- **Native MenuBar**: Electron's built-in menu
+- **Sticky Navbar**: `position: sticky` with blur
 - **Fixed Navbar**: `position: fixed` overlay
 - **Custom HTML**: Fully customizable
 
@@ -163,7 +171,7 @@ my-electron-app/
 bun --watch src/main/index.ts
 ```
 
-### Build Output
+### Build Scripts
 
 ```json
 {
@@ -175,47 +183,18 @@ bun --watch src/main/index.ts
 }
 ```
 
-## Code Quality
-
-The CLI includes built-in support for code quality tools:
-
-### Formatting (Biome)
-
-```bash
-bun run format  # Format code with Biome
-```
-
-### Linting (Biome)
-
-```bash
-bun run lint  # Lint code with Biome
-```
-
-### Type Checking (TypeScript)
-
-```bash
-bun run typecheck  # Run TypeScript type checking
-```
-
-### Full Check
-
-```bash
-bun run check  # Run format, lint, and typecheck
-```
-
 ## Technical Stack
 
 - **Runtime**: Bun 1.3+
 - **Bundler**: Vite + electron-vite
-- **Language**: TypeScript 5.x (strict mode)
+- **Language**: TypeScript 5.x
 - **Framework**: React 19 / Vue 3 / Vanilla
 - **Styling**: Tailwind CSS 4
 - **Components**: shadcn/ui / Kumo / Aura UI
-- **Linting**: Biome
-- **Formatting**: Biome
-- **Type Checking**: TypeScript
+- **Linting**: ESLint / Biome
+- **Formatting**: Prettier
 
-## Why Bun?
+## Bun Benefits
 
 - ⚡ **10-100x faster** than npm/yarn/pnpm
 - 🎯 **Built-in bundler** with native TypeScript support
@@ -223,55 +202,10 @@ bun run check  # Run format, lint, and typecheck
 - 📦 **Zero-config**: Works out of the box
 - 🚀 **Standalone**: Compile to single executable
 
-## Bun + Electron Integration
+## Contributing
 
-- `--watch` mode: Hard restart on file changes
-- `--hot` mode: Soft reload (HMR) for main process
-- `Bun.build()`: Native bundling with file watching
-- `import.meta.hot`: Vite-compatible HMR API
-- Standalone compilation via `bun build --compile`
-
-## Installation
-
-### Global Usage
-
-```bash
-bunx @involvex/create-electron-app
-```
-
-### NPM
-
-```bash
-npx create-electron-app
-```
-
-### Yarn
-
-```bash
-yarn create create-electron-app
-```
-
-### PNPM
-
-```bash
-pnpm create create-electron-app
-```
-
-## Browser Support
-
-- macOS (native menus, tray)
-- Windows (native menus, tray)
-- Linux (native menus, tray with limitations)
+See [PLANNING.md](.kilo/plans/) for detailed technical planning and architecture decisions.
 
 ## License
 
 MIT
-
-## Resources
-
-- [PLANNING.md](.kilo/plans/) - Detailed technical planning and architecture
-- [electron-vite](https://electron-vite.org) - Build tool documentation
-- [Bun](https://bun.sh) - Runtime documentation
-- [Tailwind CSS](https://tailwindcss.com) - Styling framework
-- [shadcn/ui](https://ui.shadcn.com) - Component library
-- [Kumo](https://kumo-ui.com) - Cloudflare design system
