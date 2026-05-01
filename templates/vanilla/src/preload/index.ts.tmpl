@@ -1,0 +1,61 @@
+import { contextBridge, ipcRenderer } from "electron";
+
+/**
+ * Expose protected APIs to renderer process
+ * This preload script runs before the renderer and has Node.js access
+ */
+
+contextBridge.exposeInMainWorld("electronAPI", {
+  // Platform info
+  platform: process.platform,
+  arch: process.arch,
+
+  // Version info
+  versions: {
+    node: process.versions.node,
+    chrome: process.versions.chrome,
+    electron: process.versions.electron,
+  },
+
+  // IPC communication (example)
+  sendMessage: (channel: string, data: unknown) => {
+    const validChannels = ["toMain"];
+    if (validChannels.includes(channel)) {
+      ipcRenderer.send(channel, data);
+    }
+  },
+
+  receiveMessage: (channel: string, callback: (data: unknown) => void) => {
+    const validChannels = ["fromMain"];
+    if (validChannels.includes(channel)) {
+      ipcRenderer.on(channel, (_event, data) => callback(data));
+    }
+  },
+
+  // Remove listener
+  removeListener: (channel: string, callback: (data: unknown) => void) => {
+    if (channel && callback) {
+      ipcRenderer.removeListener(channel, callback);
+    }
+  },
+});
+
+// Type declaration for renderer
+declare global {
+  interface Window {
+    electronAPI: {
+      platform: string;
+      arch: string;
+      versions: {
+        node: string;
+        chrome: string;
+        electron: string;
+      };
+      sendMessage: (channel: string, data: unknown) => void;
+      receiveMessage: (channel: string, callback: (data: unknown) => void) => void;
+      removeListener: (channel: string, callback: (data: unknown) => void) => void;
+    };
+  }
+}
+
+export {};

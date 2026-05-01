@@ -1,0 +1,32 @@
+import("./main.css");
+
+// Simple vanilla TypeScript entry
+console.log("App started");
+
+// Create basic UI
+const app = document.getElementById("app");
+if (app) {
+  const heading = document.createElement("h1");
+  heading.textContent = "{{projectName}}";
+  heading.style.cssText = "font-size: 2rem; font-weight: bold; text-align: center; margin-top: 2rem;";
+  
+  const subtitle = document.createElement("p");
+  subtitle.textContent = "{{description}}";
+  subtitle.style.cssText = "text-align: center; color: #666; margin-top: 0.5rem;";
+  
+  app.appendChild(heading);
+  app.appendChild(subtitle);
+
+  // Show Electron API info
+  const info = document.createElement("div");
+  info.style.cssText = "position: absolute; bottom: 1rem; left: 1rem; font-size: 0.75rem; color: #999;";
+  if (window.electronAPI) {
+    info.innerHTML = `
+      <div>Electron ${window.electronAPI.versions.electron}</div>
+      <div>Node ${window.electronAPI.versions.node}</div>
+      <div>Chrome ${window.electronAPI.versions.chrome}</div>
+      <div>Platform: ${window.electronAPI.platform}</div>
+    `;
+  }
+  app.appendChild(info);
+}

@@ -1,32 +1,32 @@
 {
-  "name": "@involvex/create-electron-app",
-  "author": "involvex",
-  "version": "1.0.0",
-  "description": "Interactive CLI for scaffolding Electron applications with Bun runtime",
-  "module": "src/index.ts",
-  "type": "module",
-  "bin": {
-    "create-electron-app": "src/index.ts"
-  },
-  "scripts": {
-    "start": "bun run src/index.ts",
-    "dev": "bun run src/index.ts",
-    "build": "echo \"No build step needed - Bun runs TypeScript directly\"",
-    "format": "biome format --write .",
-    "lint": "biome check --write .",
-    "typecheck": "tsc --noEmit",
-    "check": "bun run format && bun run lint && bun run typecheck"
-  },
-  "dependencies": {
-    "@clack/prompts": "^1.3.0",
-    "@types/node": "^25.6.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.4.13",
-    "@types/bun": "latest",
-    "typescript": "^6.0.0"
-  },
-  "peerDependencies": {
-    "typescript": "^6.0.3"
-  }
+	"name": "@involvex/create-electron-app",
+	"author": "involvex",
+	"version": "1.0.0",
+	"description": "Interactive CLI for scaffolding Electron applications with Bun runtime",
+	"module": "src/index.ts",
+	"type": "module",
+	"bin": {
+		"create-electron-app": "src/index.ts"
+	},
+	"scripts": {
+		"start": "bun run src/index.ts",
+		"dev": "bun run src/index.ts",
+		"build": "echo \"No build step needed - Bun runs TypeScript directly\"",
+		"format": "biome format --write .",
+		"lint": "biome check --write .",
+		"typecheck": "tsc --noEmit",
+		"check": "bun run format && bun run lint && bun run typecheck"
+	},
+	"dependencies": {
+		"@clack/prompts": "^1.3.0",
+		"@types/node": "^25.6.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.13",
+		"@types/bun": "latest",
+		"typescript": "^6.0.0"
+	},
+	"peerDependencies": {
+		"typescript": "^6.0.3"
+	}
 }

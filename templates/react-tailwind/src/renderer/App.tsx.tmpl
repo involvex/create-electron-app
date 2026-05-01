@@ -1,0 +1,31 @@
+import React, { useState, useEffect } from "react";
+import { ThemeToggle } from "./components/ThemeToggle";
+import { GlassCard } from "./components/GlassCard";
+
+export default function App() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800 transition-colors duration-300">
+      {/* Floating glass card */}
+      <GlassCard className="p-8 max-w-md w-full mx-4">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          {{projectName}}
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
+          {{description}}
+        </p>
+        
+        {/* Theme toggle */}
+        <ThemeToggle />
+      </GlassCard>
+
+      {/* ElectroAPI info */}
+      {window.electronAPI && (
+        <div className="mt-8 text-xs text-gray-500 dark:text-gray-400 text-center">
+          <div>Electron {window.electronAPI.versions.electron}</div>
+          <div>React 19 + Tailwind CSS</div>
+          <div>{window.electronAPI.platform} {window.electronAPI.arch}</div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,36 @@
+{
+  "name": "{{projectName}}",
+  "version": "1.0.0",
+  "description": "{{description}}",
+  "main": "dist/main/index.js",
+  "author": "{{author}}",
+  "license": "{{license}}",
+  "type": "module",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "format": "biome format --write .",
+    "lint": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "check": "bun run format && bun run lint && bun run typecheck"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.13",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.0",
+    "electron": "^36.0.0",
+    "electron-vite": "^3.0.0",
+    "postcss": "^8.4.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^6.0.0"
+  },
+  "dependencies": {
+    "@casoon/tailwindcss-glass": "^1.0.0",
+    "electron-store": "^9.0.0"
+  }
+}

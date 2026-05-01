@@ -1,0 +1,64 @@
+import { app, BrowserWindow, screen } from "electron";
+import { join } from "node:path";
+import { buildMenu } from "../menu";
+
+let mainWindow: BrowserWindow | null = null;
+
+const isDev = process.env.NODE_ENV === "development";
+
+function createWindow() {
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+
+  mainWindow = new BrowserWindow({
+    width: Math.floor(width * 0.8),
+    height: Math.floor(height * 0.8),
+    minWidth: 800,
+    minHeight: 600,
+    webPreferences: {
+      preload: join(__dirname, "../preload/index.js"),
+      contextIsolation: true,
+      nodeIntegration: false,
+    },
+    titleBarStyle: "hiddenInset",
+    backgroundColor: "#ffffff",
+    show: false,
+    autoHideMenuBar: false, // Show menu bar
+  });
+
+  // Set application menu
+  const menu = buildMenu();
+  app.whenReady().then(() => {
+    Menu.setApplicationMenu(menu);
+  });
+
+  if (isDev) {
+    mainWindow.loadURL("http://localhost:5173");
+    mainWindow.webContents.openDevTools();
+  } else {
+    mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
+  }
+
+  mainWindow.once("ready-to-show", () => {
+    mainWindow?.show();
+  });
+
+  mainWindow.on("closed", () => {
+    mainWindow = null;
+  });
+}
+
+app.whenReady().then(createWindow);
+
+app.on("activate", () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});
+
+import { Menu } from "electron";

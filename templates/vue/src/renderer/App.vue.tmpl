@@ -1,0 +1,47 @@
+<script setup lang="ts">
+import { ref } from "vue";
+
+const count = ref(0);
+</script>
+
+<template>
+  <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-slate-900 p-4">
+    <div class="glass-card p-8 max-w-md w-full text-center">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        {{ $projectName }}
+      </h1>
+      <p class="text-gray-600 dark:text-gray-300 mb-6">
+        {{ $description }}
+      </p>
+      
+      <button
+        @click="count++"
+        class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+      >
+        Count: {{ count }}
+      </button>
+    </div>
+
+    {# Electron info #}
+    {# @ts-ignore #}
+    {# @ts-ignore #}
+    {# @ts-ignore #}
+    {# @ts-ignore #}
+    <div v-if="window.electronAPI" class="mt-8 text-xs text-gray-500 text-center">
+      <!-- Electron info would go here -->
+      <div>Vue 3 + Electron</div>
+      <div>{{ navigator.userAgent.includes('Win') ? 'Windows' : navigator.userAgent.includes('Mac') ? 'macOS' : 'Linux' }}</div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.glass-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+</style>

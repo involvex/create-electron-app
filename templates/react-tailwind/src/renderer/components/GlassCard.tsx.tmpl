@@ -1,0 +1,31 @@
+import React from "react";
+
+interface GlassCardProps {
+  children: React.ReactNode;
+  className?: string;
+  level?: "soft" | "standard" | "strong" | "dark" | "gradient";
+}
+
+export function GlassCard({ children, className = "", level = "standard" }: GlassCardProps) {
+  const glassStyles: Record<string, string> = {
+    soft: "bg-white/10 backdrop-blur-8 border-white/20",
+    standard: "bg-white/15 backdrop-blur-16 border-white/20",
+    strong: "bg-white/20 backdrop-blur-24 border-white/30",
+    dark: "bg-black/30 backdrop-blur-16 border-white/10",
+    gradient: "bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-16 border-white/20",
+  };
+
+  return (
+    <div
+      className={`
+        rounded-2xl
+        shadow-glass
+        border
+        ${glassStyles[level]}
+        ${className}
+      `}
+    >
+      {children}
+    </div>
+  );
+}

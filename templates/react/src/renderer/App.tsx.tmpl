@@ -1,0 +1,37 @@
+import React from "react";
+
+export default function App() {
+  return (
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "100vh",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    }}>
+      <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", marginBottom: "0.5rem" }}>
+        {{projectName}}
+      </h1>
+      <p style={{ color: "#666", marginBottom: "2rem" }}>
+        {{description}}
+      </p>
+      
+      {window.electronAPI && (
+        <div style={{
+          marginTop: "3rem",
+          padding: "1rem",
+          background: "rgba(0,0,0,0.05)",
+          borderRadius: "8px",
+          fontSize: "0.75rem",
+          color: "#666",
+          textAlign: "center",
+        }}>
+          <div>Electron {window.electronAPI.versions.electron}</div>
+          <div>React 19 + Vite</div>
+          <div>Platform: {window.electronAPI.platform}</div>
+        </div>
+      )}
+    </div>
+  );
+}

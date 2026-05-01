@@ -1,0 +1,28 @@
+// Shared types for main and renderer processes
+export interface AppInfo {
+  name: string;
+  version: string;
+  description: string;
+}
+
+export interface IPCMessage<T = unknown> {
+  channel: string;
+  data: T;
+}
+
+export interface WindowState {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  isMaximized: boolean;
+  isMinimized: boolean;
+  isFullscreen: boolean;
+}
+
+// Electron store schema (if using electron-store)
+export interface StoreSchema {
+  theme: "light" | "dark";
+  windowBounds?: WindowState;
+  recentFiles?: string[];
+}

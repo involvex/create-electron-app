@@ -1,0 +1,47 @@
+import { contextBridge, ipcRenderer } from "electron";
+
+contextBridge.exposeInMainWorld("electronAPI", {
+  platform: process.platform,
+  arch: process.arch,
+  versions: {
+    node: process.versions.node,
+    chrome: process.versions.chrome,
+    electron: process.versions.electron,
+  },
+  sendMessage: (channel: string, data: unknown) => {
+    const validChannels = ["toMain"];
+    if (validChannels.includes(channel)) {
+      ipcRenderer.send(channel, data);
+    }
+  },
+  receiveMessage: (channel: string, callback: (data: unknown) => void) => {
+    const validChannels = ["fromMain"];
+    if (validChannels.includes(channel)) {
+      ipcRenderer.on(channel, (_event, data) => callback(data));
+    }
+  },
+  removeListener: (channel: string, callback: (data: unknown) => void) => {
+    if (channel && callback) {
+      ipcRenderer.removeListener(channel, callback);
+    }
+  },
+});
+
+declare global {
+  interface Window {
+    electronAPI: {
+      platform: string;
+      arch: string;
+      versions: {
+        node: string;
+        chrome: string;
+        electron: string;
+      };
+      sendMessage: (channel: string, data: unknown) => void;
+      receiveMessage: (channel: string, callback: (data: unknown) => void) => void;
+      removeListener: (channel: string, callback: (data: unknown) => void) => void;
+    };
+  }
+}
+
+export {};

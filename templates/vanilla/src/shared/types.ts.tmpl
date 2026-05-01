@@ -1,0 +1,23 @@
+// Shared TypeScript types between main and renderer
+export interface AppInfo {
+  name: string;
+  version: string;
+  description: string;
+}
+
+// IPC message types
+export interface IPCMessage<T = unknown> {
+  channel: string;
+  data: T;
+}
+
+// Window state
+export interface WindowState {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  isMaximized: boolean;
+  isMinimized: boolean;
+  isFullscreen: boolean;
+}

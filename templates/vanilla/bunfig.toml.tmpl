@@ -1,0 +1,18 @@
+# Bun configuration for Electron app
+# See: https://bun.sh/docs/bunfig
+
+[install]
+# Save exact versions by default
+save = "exact"
+
+[run]
+# Hot module replacement for development
+hmr = true
+# Hot reload (soft restart) instead of hard restart
+hot = true
+
+[build]
+# Target browser-like environment for renderer
+target = "browser"
+# Output directory for builds
+outdir = "dist"
