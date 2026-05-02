@@ -65,7 +65,7 @@ export function generatePackageJson(options: ProjectOptions): Record<string, unk
 	};
 
 	// Add styling framework dependencies if selected
-	if (options.template === 'react-tailwind' && options.styling) {
+	if (options.styling) {
 		switch (options.styling) {
 			case 'shadcn':
 				// shadcn/ui components are added manually; nothing to install
@@ -77,8 +77,11 @@ export function generatePackageJson(options: ProjectOptions): Record<string, unk
 				break;
 			case 'aura':
 				Object.assign(deps, {
-					'aura-ui': 'latest',
+					'@aura-ui/vue': 'latest',
 				});
+				break;
+			case 'tailwind':
+				// Tailwind is already handled in template-specific deps
 				break;
 		}
 	}

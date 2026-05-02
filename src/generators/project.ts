@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { dirname, join, relative, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ProjectOptions } from '../cli/prompts';
 import { generatePackageJson } from './configs';
@@ -28,13 +28,23 @@ export async function generateProject(options: ProjectOptions): Promise<void> {
 	await generateConfigFiles(projectRoot, options);
 
 	// Generate menu/tray code if native
-	if (options.navigation === 'native') {
+	if (options.navigation === 'native' || options.uiFeatures.trayMenu) {
 		await generateMenu(projectRoot, options);
+	}
+
+	// Generate backend server if requested
+	if (options.backend === 'bun-serve') {
+		await generateBackendServer(projectRoot, options);
 	}
 
 	// Generate theme CSS if theme features enabled
 	if (options.uiFeatures.themeToggle || options.uiFeatures.glassMorphism) {
 		await generateThemes(projectRoot, options);
+	}
+
+	// Generate glass morphism CSS if selected
+	if (options.uiFeatures.glassMorphism) {
+		await generateGlassMorphism(projectRoot, options);
 	}
 
 	// Generate .gitignore
@@ -68,8 +78,12 @@ async function createDirectories(projectRoot: string, options: ProjectOptions): 
 
 	// Create components directory for React Tailwind
 	if (options.template === 'react-tailwind') {
-		await fs.promises.mkdir(join(projectRoot, 'src/renderer/components'), { recursive: true });
-		await fs.promises.mkdir(join(projectRoot, 'src/renderer/contexts'), { recursive: true });
+		await fs.promises.mkdir(join(projectRoot, 'src/renderer/components'), {
+			recursive: true,
+		});
+		await fs.promises.mkdir(join(projectRoot, 'src/renderer/contexts'), {
+			recursive: true,
+		});
 	}
 }
 
@@ -96,12 +110,11 @@ async function copyDirectory(
 
 	for (const entry of entries) {
 		const srcPath = join(srcDir, entry.name);
-		const relativePath = relative(srcDir, srcPath);
-		const destPath = join(destRoot, relativePath);
+		const destPath = join(destRoot, entry.name);
 
 		if (entry.isDirectory()) {
 			await fs.promises.mkdir(destPath, { recursive: true });
-			await copyDirectory(srcPath, destRoot, options);
+			await copyDirectory(srcPath, destPath, options);
 		} else {
 			let content = await fs.promises.readFile(srcPath, 'utf-8');
 
@@ -156,17 +169,23 @@ async function writeFile(filePath: string, content: string): Promise<void> {
  * Generate config files (package.json, tsconfig, vite configs)
  */
 async function generateConfigFiles(projectRoot: string, options: ProjectOptions): Promise<void> {
-	// Generate package.json
+	// Generate package.json (always generate to include user options)
 	const packageJson = generatePackageJson(options);
 	await writeFile(join(projectRoot, 'package.json'), JSON.stringify(packageJson, null, 2));
 
-	// Generate tsconfig.json
-	const tsconfig = getTsConfigContent();
-	await writeFile(join(projectRoot, 'tsconfig.json'), JSON.stringify(tsconfig, null, 2));
+	// Generate tsconfig.json if not in template
+	const tsconfigPath = join(projectRoot, 'tsconfig.json');
+	if (!(await fileExists(tsconfigPath))) {
+		const tsconfig = getTsConfigContent();
+		await writeFile(tsconfigPath, JSON.stringify(tsconfig, null, 2));
+	}
 
-	// Generate vite config based on template
-	const viteContent = getViteConfigContent(options);
-	await writeFile(join(projectRoot, 'electron.vite.config.ts'), viteContent);
+	// Generate vite config if not in template
+	const viteConfigPath = join(projectRoot, 'electron.vite.config.ts');
+	if (!(await fileExists(viteConfigPath))) {
+		const viteContent = getViteConfigContent(options);
+		await writeFile(viteConfigPath, viteContent);
+	}
 
 	// Generate tailwind config if applicable
 	if (options.template === 'react-tailwind' && options.styling === 'tailwind') {
@@ -181,6 +200,18 @@ async function generateConfigFiles(projectRoot: string, options: ProjectOptions)
 	}
 	if (options.codeQuality.prettier) {
 		await writeFile(join(projectRoot, 'prettier.config.js'), getPrettierConfigContent());
+	}
+}
+
+/**
+ * Check if file exists
+ */
+async function fileExists(filePath: string): Promise<boolean> {
+	try {
+		await fs.promises.access(filePath);
+		return true;
+	} catch {
+		return false;
 	}
 }
 
@@ -235,6 +266,156 @@ outdir = "dist"
 }
 
 /**
+ * Generate glass morphism CSS
+ */
+async function generateGlassMorphism(projectRoot: string, options: ProjectOptions): Promise<void> {
+	const glassLevel = options.glassLevel || 'standard';
+
+	const glassStyles: Record<string, string> = {
+		soft: `
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+`,
+		standard: `
+.glass {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+`,
+		strong: `
+.glass {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 1.25rem;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.25rem;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+}
+`,
+		dark: `
+.glass {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+`,
+		gradient: `
+.glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glass-dark {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+`,
+	};
+
+	const glassCSS = glassStyles[glassLevel] ?? glassStyles.standard;
+	if (glassCSS) {
+		await writeFile(join(projectRoot, 'src/renderer/glass.css'), glassCSS.trim());
+	}
+}
+
+/**
+ * Generate Bun.serve() backend server
+ */
+async function generateBackendServer(projectRoot: string, options: ProjectOptions): Promise<void> {
+	const backendDir = join(projectRoot, 'src/backend');
+	await fs.promises.mkdir(backendDir, { recursive: true });
+
+	const serverContent = `import { serve } from "bun";
+
+const server = serve({
+  port: 3000,
+  async fetch(req) {
+    const url = new URL(req.url);
+
+    // API routes
+    if (url.pathname === "/api/health") {
+      return Response.json({ status: "ok", timestamp: Date.now() });
+    }
+
+    if (url.pathname === "/api/info") {
+      return Response.json({
+        name: "${options.projectName}",
+        version: "1.0.0",
+        description: "${options.description}",
+      });
+    }
+
+    // 404 for unknown routes
+    return new Response("Not Found", { status: 404 });
+  },
+});
+
+console.log(\`Backend server running on http://localhost:\${server.port}\`);
+
+export default server;
+`;
+
+	await writeFile(join(backendDir, 'server.ts'), serverContent);
+}
+
+/**
  * Get tsconfig.json content
  */
 function getTsConfigContent(): object {
@@ -275,7 +456,7 @@ export default defineConfig({
         external: ["electron"],
         plugins: [externalizeDepsPlugin({ explicit: ["electron"] })],
         input: {
-          main: resolve(__dirname, '../src/main/index.ts'),
+          main: resolve(__dirname, 'src/main/index.ts'),
         },
       },
     },
@@ -287,7 +468,7 @@ export default defineConfig({
         external: ["electron"],
         plugins: [externalizeDepsPlugin({ explicit: ["electron"] })],
         input: {
-          preload: resolve(__dirname, '../src/preload/index.ts'),
+          preload: resolve(__dirname, 'src/preload/index.ts'),
         },
       },
     },
@@ -297,7 +478,7 @@ export default defineConfig({
       outDir: "dist/renderer",
       rollupOptions: {
         input: {
-          renderer: resolve(__dirname, '../src/renderer/index.html'),
+          renderer: resolve(__dirname, 'src/renderer/index.html'),
         },
       },
     },
